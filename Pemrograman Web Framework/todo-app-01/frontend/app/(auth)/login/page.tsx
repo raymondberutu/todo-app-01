@@ -1,30 +1,22 @@
-import React from "react";
-import Link from "next/link";
-import LoginForm from "./components/LoginForm";
+import React from 'react';
+import { getTodos } from '@/lib/todos';
+import TodoStateOnlyApp from './components/TodoStateOnlyApp';
 
-export default function LoginPage() {
+export default async function TodoPage() {
+  // Mengambil data awal di sisi server (Server Component)
+  const initialTodos = await getTodos();
+
   return (
-    <main className="min-h-screen p-8 bg-gray-100 flex items-center justify-center">
-      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-        <header className="mb-6 border-b pb-4 text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Login</h1>
-          <p className="text-sm text-gray-500 mt-1">Masuk ke akun Anda.</p>
+    <main className="min-h-screen p-8 bg-gray-100">
+      <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+        <header className="mb-6 border-b pb-4">
+          <h1 className="text-3xl font-bold text-gray-800 text-center">
+            Daftar Tugas (Todo List)
+          </h1>
         </header>
 
-        {/* Form Komponen */}
-        <LoginForm />
-
-        <div className="mt-6 border-t pt-4 text-center">
-          <p className="text-gray-600">
-            Belum punya akun?{" "}
-            <Link
-              href="/register"
-              className="text-blue-600 hover:underline font-medium"
-            >
-              Daftar di sini
-            </Link>
-          </p>
-        </div>
+        {/* Menggantikan TodoForm dan TodoList terpisah dengan satu Container Utama */}
+        <TodoStateOnlyApp initialTodos={initialTodos} />
       </div>
     </main>
   );
