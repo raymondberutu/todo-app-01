@@ -16,9 +16,9 @@ export default function TodoStateOnlyApp({ initialTodos }: Props) {
     const newTodo: Todo = {
       id: Date.now(), // Gunakan timestamp sebagai ID sementara
       title,
-      description: '',
+      // description: '', => BARIS INI DIHAPUS menyesuaikan skema database
       completed: false,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString().split('T')[0],
     };
     setTodos([newTodo, ...todos]);
   };
@@ -35,11 +35,11 @@ export default function TodoStateOnlyApp({ initialTodos }: Props) {
 
   return (
     <div>
-      <TodoForm onAddTodo={handleAddTodo} />
+      <TodoForm onAdd={handleAddTodo} />
       <TodoList 
         todos={todos} 
-        onToggleTodo={handleToggleTodo} 
-        onDeleteTodo={handleDeleteTodo} 
+        onToggle={handleToggleTodo} 
+        onDelete={handleDeleteTodo} 
       />
     </div>
   );

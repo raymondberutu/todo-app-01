@@ -35,14 +35,7 @@ export default function TaskDetailCard({ todo }: TaskDetailCardProps) {
             <h2 className="text-xl font-semibold text-gray-900">{todo.title}</h2>
           </div>
 
-          <div>
-            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-              Deskripsi
-            </label>
-            <p className="text-gray-600 bg-gray-50 p-4 rounded-md border border-gray-200 mt-1">
-              {todo.description}
-            </p>
-          </div>
+          {/* Bagian deskripsi (todo.description) telah dihapus menyesuaikan database */}
 
           <div>
             <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">

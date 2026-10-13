@@ -1,25 +1,52 @@
-export const BASE_URL = 'https://dummyjson.com';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  status: number;
+  constructor(message: string, status: number) {
     super(message);
+    this.name = 'ApiError';
+    this.status = status;
   }
 }
 
-export async function apiClient<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      headers: { 'Content-Type': 'application/json', ...options.headers },
-      ...options,
-    });
+export async function apiClient<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  // Memastikan format endpoint diawali dengan '/'
+  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  
+  // Mengambil token dari localStorage (hanya dijalankan di sisi client/browser)
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-    if (!response.ok) {
-      throw new ApiError(response.status, `HTTP Error: ${response.status}`);
-    }
+  const defaultHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
 
-    return await response.json();
-  } catch (error) {
-    console.error('API Client Error:', error);
-    throw error;
+  // Menyisipkan JWT Token jika pengguna sudah login
+  if (token) {
+    defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers: {
+        ...defaultHeaders,
+        ...options.headers,
+      },
+    });
+  } catch (error) {
+    throw new Error('Gagal terhubung ke server backend');
+  }
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const errorMessage = data?.message || `Terjadi kesalahan (Status: ${response.status})`;
+    throw new ApiError(errorMessage, response.status);
+  }
+
+  return data as T;
 }
